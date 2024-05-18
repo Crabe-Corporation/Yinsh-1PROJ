@@ -1,0 +1,13 @@
+# YinshPawn
+*from pawn import YinshPawn*<br>
+Stockage des données d'un pion sur le plateau.
+## Paramètres
+- player (int)<br>
+  Enregistre le numéro du joueur qui possède le pion (0 correspond au joueur 1 et 1 correspond au joueur 2)
+- type (str)<br>
+  Type de pion sur le plateau. Peut prendre une des valeurs suivantes : "pawn" pour symboliser un pion qui peut être déplacé par le joueur ou "marking" pour symboliser un marquage laissé par un pion de type "pawn"
+## Variables
+- private player (int) : numéro du joueur, sauvegardé depuis les paramètres de la fonction `__init__` (0 ou 1)
+- private pawn_type (str) : type de pion, sauvegardé depuis les paramètres de la fonction `__init__` ("pawn" ou "marking")
+## Méthodes
+Aucune méthode
