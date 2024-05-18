@@ -3,6 +3,10 @@ CLASSE BOARD
 Gestion du plateau de jeu et des règles de déplacement des pions
 """
 
+"""
+YinshBoard()
+Tableau : None = case invalide, 0 = case vide, YinshPawn = pion d'un joueur
+"""
 class YinshBoard():
     def __init__(self) -> None:
         self.__board = [
