@@ -5,7 +5,7 @@ Gestion de l'interface graphique du jeu et du menu principal
 
 from tkinter import *
 from pawn import YinshPawn
-from board import X_OFFSETS, H
+from board import X_OFFSETS, H, find_closest_point
 DEFAULT_FONT = ("Helvetica", 16)
 GRID_OFFSET = (50, 61)
 
@@ -30,6 +30,7 @@ class YinshUI():
         }
 
         self.__canvas = Canvas(self.__root, width=700, height=700)
+        self.__canvas.bind("<Button-1>", self.__handle_click)
         self.__scoreboard = Frame(self.__root, width=250, height=700)
         self.__canvas.pack(side="left")
         self.__scoreboard.pack(side="left")
@@ -78,6 +79,10 @@ class YinshUI():
                                               X_OFFSETS[x] + y * 66.5 + 25 + GRID_OFFSET[0],
                                               H * x + 25 + GRID_OFFSET[1],
                                               fill="", outline=self.__color_scheme["pawns"][pawn.get_player()], width=8)
+        
+    def __handle_click(self, event) -> None:
+        coordinates = find_closest_point(event.x, event.y)
+        print(f"Intersection la plus proche: ({coordinates[0]};{coordinates[1]})")
 
 
 class YinshMenu():

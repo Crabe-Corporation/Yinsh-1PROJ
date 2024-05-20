@@ -15,3 +15,4 @@ La classe YinshUI s'occupe de gérer l'interface utilisateur d'une partie en cou
 ## Méthodes
 - public draw_board(self) -> None : affichage de la grille sur le canvas
 - public draw_pawn(self, x: int, y: int, pawn: YinshPawn) -> int : création d'une nouvelle représentation d'un pion sur le canvas, en utilisant les coordonnées x et y sur la grille et en récupérant les informations depuis une instance de YinshPawn. Renvoie la référence de la forme ajoutée sur le canvas.
+- private handle_click(self, event) -> None : fonction appelée lorsque l'utilisateur clique dans le canvas. Utilise la fonction `find_closest_point` depuis le fichier board.py pour traduire les coordonnées du canvas en coordonnées sur la grille
