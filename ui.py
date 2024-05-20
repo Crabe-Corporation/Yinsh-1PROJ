@@ -5,7 +5,9 @@ Gestion de l'interface graphique du jeu et du menu principal
 
 from tkinter import *
 from pawn import YinshPawn
+from board import X_OFFSETS, H
 DEFAULT_FONT = ("Helvetica", 16)
+GRID_OFFSET = (50, 61)
 
 """
 YinshUI()
@@ -20,6 +22,12 @@ class YinshUI():
         self.__root = Tk()
         self.__root.title("Yinsh")
         self.__root.resizable(False, False)
+
+        self.__color_scheme = {
+            "pawns": (
+                "#C55A11", "blue"
+            )
+        }
 
         self.__canvas = Canvas(self.__root, width=700, height=700)
         self.__scoreboard = Frame(self.__root, width=250, height=700)
@@ -43,15 +51,33 @@ class YinshUI():
 
         self.draw_board()
 
+        from pawn import YinshPawn
+        self.draw_pawn(1, 3, YinshPawn(0, "pawn"))
+        self.draw_pawn(1, 2, YinshPawn(1, "marking"))
+        self.draw_pawn(1, 1, YinshPawn(1, "pawn"))
+        self.draw_pawn(9, 10, YinshPawn(0, "marking"))
+        self.draw_pawn(6, 10, YinshPawn(1, "marking"))
+
         self.__root.mainloop()
 
     def draw_board(self) -> None:
         image_file = PhotoImage(file="grid.png")
-        self.__canvas.create_image(50, 61, image=image_file, anchor=NW)
+        self.__canvas.create_image(GRID_OFFSET[0], GRID_OFFSET[1], image=image_file, anchor=NW)
         self.__canvas.image = image_file
 
-    def draw_pawn(self, x: int, y: int, pawn: YinshPawn) -> tuple:
-        pass
+    def draw_pawn(self, x: int, y: int, pawn: YinshPawn) -> int:
+        if pawn.get_pawn_type() == "marking":
+            return self.__canvas.create_oval(X_OFFSETS[x] + y * 66.5 - 20 + GRID_OFFSET[0],
+                                              H * x - 20 + GRID_OFFSET[1],
+                                              X_OFFSETS[x] + y * 66.5 + 20 + GRID_OFFSET[0],
+                                              H * x + 20 + GRID_OFFSET[1],
+                                              fill=self.__color_scheme["pawns"][pawn.get_player()], width=0)
+        else:
+            return self.__canvas.create_oval(X_OFFSETS[x] + y * 66.5 - 25 + GRID_OFFSET[0],
+                                              H * x - 25 + GRID_OFFSET[1],
+                                              X_OFFSETS[x] + y * 66.5 + 25 + GRID_OFFSET[0],
+                                              H * x + 25 + GRID_OFFSET[1],
+                                              fill="", outline=self.__color_scheme["pawns"][pawn.get_player()], width=8)
 
 
 class YinshMenu():

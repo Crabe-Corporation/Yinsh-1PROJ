@@ -10,4 +10,5 @@ Stockage des données d'un pion sur le plateau.
 - private player (int) : numéro du joueur, sauvegardé depuis les paramètres de la fonction `__init__` (0 ou 1)
 - private pawn_type (str) : type de pion, sauvegardé depuis les paramètres de la fonction `__init__` ("pawn" ou "marking")
 ## Méthodes
-Aucune méthode
+- public get_pawn_type(self) -> str: getter permettant de récupérer le type de pion ("pawn" ou "marking")
+- public get_player(self) -> int : getter qui renvoie le numéro du joueur auquel appartient le pion (0 ou 1)

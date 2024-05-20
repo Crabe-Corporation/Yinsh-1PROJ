@@ -9,8 +9,9 @@ La classe YinshUI s'occupe de gérer l'interface utilisateur d'une partie en cou
 - private root (Tk) : fenêtre de jeu Tkinter principale
 - private canvas (Canvas) : affichage de la grille de jeu
 - private scoreboard (Frame) : frame contenant les informations de la partie en cours (joueurs, pions retirés, etc)
-- private player_texts : stockage des StringVar pour l'affichage des informations relatives aux joueurs
-- private player_labels : enregistrement des Label affichant les joueurs
+- private player_texts (list[StringVar]) : stockage des StringVar pour l'affichage des informations relatives aux joueurs
+- private player_labels (list[Label]) : enregistrement des Label affichant les joueurs
+- private color_scheme (dict) : thème de couleur enregistré dans un dictionnaire pour les couleurs des pions
 ## Méthodes
 - public draw_board(self) -> None : affichage de la grille sur le canvas
-- public draw_pawn(self, x: int, y: int, pawn: YinshPawn) -> tuple : création d'une nouvelle représentation d'un pion sur le canvas, en utilisant les coordonnées x et y sur la grille et en récupérant les informations depuis une instance de YinshPawn.
+- public draw_pawn(self, x: int, y: int, pawn: YinshPawn) -> int : création d'une nouvelle représentation d'un pion sur le canvas, en utilisant les coordonnées x et y sur la grille et en récupérant les informations depuis une instance de YinshPawn. Renvoie la référence de la forme ajoutée sur le canvas.
