@@ -14,7 +14,7 @@ YinshUI()
 - settings (tuple) : paramètres de la partie sous la forme (mode blitz/jeu en réseau). Valeur par défaut = (True, False). Transformé en dictionnaire à l'initialisation.
 """
 class YinshUI():
-    def __init__(self, gamemode: str, gametype: str) -> None:
+    def __init__(self, game, gamemode: str, gametype: str) -> None:
         if gamemode in ["Blitz", "Normal"] and gametype in ["Online", "Offline", "Solo"]:
             self.__game_settings = {
                 "mode": gamemode,
@@ -25,6 +25,7 @@ class YinshUI():
         self.__root = Tk()
         self.__root.title("Yinsh")
         self.__root.resizable(False, False)
+        self.__game = game
 
         self.__color_scheme = {
             "pawns": (
@@ -39,7 +40,9 @@ class YinshUI():
         self.__scoreboard.pack(side="left")
 
         logo_file = PhotoImage(file="logo.png")
-        Label(self.__scoreboard, image=logo_file).pack()
+        logo_label = Label(self.__scoreboard, image=logo_file)
+        logo_label.image = logo_file
+        logo_label.pack()
         text_gamemode = self.__game_settings["mode"]
         text_gamemode += ", en réseau" if self.__game_settings["type"] == "Online" else ", local"
         pawns_to_win = 1 if self.__game_settings["mode"] == "Blitz" else 3
@@ -55,6 +58,7 @@ class YinshUI():
 
         self.draw_board()
 
+    def run(self):
         self.__root.mainloop()
 
     def draw_board(self) -> None:
@@ -76,9 +80,10 @@ class YinshUI():
                                               H * x + 25 + GRID_OFFSET[1],
                                               fill="", outline=self.__color_scheme["pawns"][pawn.get_player()], width=8)
         
-    def __handle_click(self, event) -> None:
+    def __handle_click(self, event: Event) -> None:
+        # Envoyer les informations dans la partie logique du jeu
         coordinates = find_closest_point(event.x, event.y)
-
+        self.__game.handle_click(coordinates[0], coordinates[1])
 
 class YinshMenu():
     def __init__(self) -> None:

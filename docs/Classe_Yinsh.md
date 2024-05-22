@@ -7,6 +7,11 @@ Les paramètres sont passées via **params pour passer les arguments en keyword 
 - gametype (str)<br>
   Type de partie. Peut prendre la valeur "Online" pour une partie en réseau, "Offline" pour une partie 1 contre 1 en local (sur la même machine) ou "Solo" pour une partie contre l'ordinateur.
 ## Variables
-- private ui (YinshUI) : composant interface utilisateur du jeu
+- private gamemode (str) : Mode de jeu récupéré depuis les arguments
+- private gametype (str) : Type de partie récupéré depuis les arguments
+- private ui (YinshUI) : Composant interface graphique du jeu
+- private board (YinshBoard) : Composant plateau utilisée pour la partie
+- private turn (int) : Compteur de tours de la partie
+- private focused (tuple) : Coordonnées du pion sélectionné pour un déplacement. Défini à `None` au début de la partie ou si aucun pion n'est sélectionné.
 ## Méthodes
-Aucune méthode
+- public handle_click(self, x: int, y: int) -> None: fonction appelée par la classe YinshUI lorsqu'un joueur clique sur le plateau de jeu pour gérer la logique du jeu.

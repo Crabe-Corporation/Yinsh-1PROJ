@@ -1,4 +1,5 @@
 from math import sqrt
+from pawn import YinshPawn
 
 """
 CLASSE BOARD
@@ -32,6 +33,67 @@ Tableau : None = case invalide, 0 = case vide, YinshPawn = pion d'un joueur
 class YinshBoard():
     def __init__(self) -> None:
         self.__board = generate_empty_board()
+
+    def is_valid(self, x: int, y: int) -> bool:
+        if x < 0 or x > 11:
+            return False
+        if y < 0 or x > 11:
+            return False
+        if self.__board[x][y] == None:
+            return False
+        return True
+    
+    def is_empty(self, x: int, y: int) -> bool:
+        if not self.is_valid(x, y):
+            return False
+        if self.__board[x][y] != 0:
+            return False
+        return True
+    
+    def can_move(self, x_start: int, y_start: int, x_end: int, y_end: int)  -> bool:
+        # Vérifier que la case est sur l'un des 6 axes possibles
+        if x_start != x_end and y_start != y_end:
+            if (x_end - x_start != y_end - y_start):
+                return False
+            
+        # Vérifier si la destination est occupée ou non
+        if not self.is_empty(x_end, y_end):
+            return False
+        
+        # Vérifier si les règles de déplacement par dessus des marquages sont respectées
+        distance = abs(x_end - x_start) if abs(x_end - x_start) != 0 else abs(y_end - y_start)
+        dist_x, dist_y = x_end - x_start, y_end - y_start
+        x, y = x_start, y_start
+        marking_found = False
+        while x != x_end or y != y_end:
+            # Se déplacer d'une intersection vers la destination
+            x += dist_x // distance
+            y += dist_y // distance
+
+            print(f"CHECK ({x};{y})")
+
+            # Vérifier la case
+            if self.is_empty(x, y) and not marking_found:
+                pass
+            else:
+                if self.__board[x][y].get_pawn_type() == "pawn":
+                    return False
+                if self.__board[x][y].get_pawn_type() == "marking":
+                    marking_found = True
+                if self.is_empty(x, y) and marking_found and x != x_end:
+                    return False
+        return True
+    
+    def get_pawn(self, x: int, y: int) -> YinshPawn | None:
+        if self.is_empty(x, y):
+            return None
+        return self.__board[x][y]
+    
+    def place_new_pawn(self, x: int, y: int, pawn: YinshPawn) -> bool:
+        if not self.is_empty(x, y):
+            return False
+        self.__board[x][y] = pawn
+        return True
 
 def generate_empty_board() -> list[list[int | None]]:
     return [
