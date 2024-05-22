@@ -14,11 +14,14 @@ YinshUI()
 - settings (tuple) : paramètres de la partie sous la forme (mode blitz/jeu en réseau). Valeur par défaut = (True, False). Transformé en dictionnaire à l'initialisation.
 """
 class YinshUI():
-    def __init__(self, settings = (True, False)) -> None:
-        self.__game_settings = {
-            "blitz_mode": settings[0],
-            "online": settings[1]
-        }
+    def __init__(self, gamemode: str, gametype: str) -> None:
+        if gamemode in ["Blitz", "Normal"] and gametype in ["Online", "Offline", "Solo"]:
+            self.__game_settings = {
+                "mode": gamemode,
+                "type": gametype
+            }
+        else:
+            raise ValueError("gamemode et/ou gametype invalide(s) !")
         self.__root = Tk()
         self.__root.title("Yinsh")
         self.__root.resizable(False, False)
@@ -37,9 +40,9 @@ class YinshUI():
 
         logo_file = PhotoImage(file="logo.png")
         Label(self.__scoreboard, image=logo_file).pack()
-        text_gamemode = "Blitz" if settings[0] else "Normal"
-        text_gamemode += ", en réseau" if settings[1] else ", local"
-        pawns_to_win = 1 if settings[0] else 5
+        text_gamemode = self.__game_settings["mode"]
+        text_gamemode += ", en réseau" if self.__game_settings["type"] == "Online" else ", local"
+        pawns_to_win = 1 if self.__game_settings["mode"] == "Blitz" else 3
         Label(self.__scoreboard, text=f"Mode de jeu: {text_gamemode}", font=DEFAULT_FONT, padx=10, pady=30).pack()
         self.__player_texts = [
             StringVar(value=f"Joueur 1: 0/{pawns_to_win} pions"),
@@ -51,13 +54,6 @@ class YinshUI():
         ]
 
         self.draw_board()
-
-        from pawn import YinshPawn
-        self.draw_pawn(1, 3, YinshPawn(0, "pawn"))
-        self.draw_pawn(1, 2, YinshPawn(1, "marking"))
-        self.draw_pawn(1, 1, YinshPawn(1, "pawn"))
-        self.draw_pawn(9, 10, YinshPawn(0, "marking"))
-        self.draw_pawn(6, 10, YinshPawn(1, "marking"))
 
         self.__root.mainloop()
 
@@ -82,7 +78,6 @@ class YinshUI():
         
     def __handle_click(self, event) -> None:
         coordinates = find_closest_point(event.x, event.y)
-        print(f"Intersection la plus proche: ({coordinates[0]};{coordinates[1]})")
 
 
 class YinshMenu():
