@@ -22,7 +22,6 @@ class Yinsh():
             self.__ui.run()
 
     def handle_click(self, x: int, y: int) -> None:
-        print(f"Tour {self.__turn}")
         if self.__turn <= 10:
             # Tour d'initialisation : placer un pion sur le plateau
             if not self.__board.is_empty(x, y):
@@ -38,11 +37,12 @@ class Yinsh():
                     return
                 if pawn.get_player() != (self.__turn - 1) %2:
                     return
-                print(f"Pion ({x};{y}) sélectionné !")
                 self.__focused = (x, y)
             else:
                 x_start ,y_start = self.__focused
-                print(f"Tentative de déplacement de ({x_start};{y_start}) vers ({x};{y})")
+                if x_start == x and y_start == y:
+                    # Annulation
+                    self.__focused = None
                 if self.__board.can_move(x_start, y_start, x, y):
                     self.__board.move_pawn(x_start, y_start, x, y)
                     self.__focused = None
