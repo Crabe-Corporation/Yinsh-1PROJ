@@ -17,8 +17,11 @@ Si l'un de ces paramètres n'est pas valide, la classe renvoie une ValueError.
 - private player_texts (list[StringVar]) : stockage des StringVar pour l'affichage des informations relatives aux joueurs
 - private player_labels (list[Label]) : enregistrement des Label affichant les joueurs
 - private color_scheme (dict) : thème de couleur enregistré dans un dictionnaire pour les couleurs des pions
+- private drawn_shapes (dict) : contient toutes les représentations de pions sur l'interface utilisateur pour les modifier si besoin. La clé contient les coordonnées sous la forme "x;y" et la valeur correspond à une forme sur le canvas
 ## Méthodes
 - public run(self) -> None : lancement de la fenêtre graphique du jeu
 - public draw_board(self) -> None : affichage de la grille sur le canvas
 - public draw_pawn(self, x: int, y: int, pawn: YinshPawn) -> int : création d'une nouvelle représentation d'un pion sur le canvas, en utilisant les coordonnées x et y sur la grille et en récupérant les informations depuis une instance de YinshPawn. Renvoie la référence de la forme ajoutée sur le canvas.
 - private handle_click(self, event) -> None : fonction appelée lorsque l'utilisateur clique dans le canvas. Utilise la fonction `find_closest_point` depuis le fichier board.py pour traduire les coordonnées du canvas en coordonnées sur la grille
+- public erase_pawn(self, x: int, y: int) -> bool : fonction servant à effacer une forme dessinée aux coordonnées (x;y) du plateau. Renvoie `True` si la suppression de la forme a été correctement effectuée
+- public set_color(self, x: int, y: int, player: int) -> bool : modifie la couleur d'une forme dessinée aux coordonnées (x;y) du plateau pour correspondre au numéro du joueur passé en paramètre. Renvoie `True` si l'inversion est réussie

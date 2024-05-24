@@ -13,3 +13,9 @@ class YinshPawn():
     
     def get_player(self) -> int:
         return self.__player
+    
+    def invert_player(self) -> int:
+        if self.__pawn_type == "pawn":
+            return False
+        self.__player = (self.__player + 1) %2
+        return self.__player

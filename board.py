@@ -31,8 +31,9 @@ YinshBoard()
 Tableau : None = case invalide, 0 = case vide, YinshPawn = pion d'un joueur
 """
 class YinshBoard():
-    def __init__(self) -> None:
+    def __init__(self, ui) -> None:
         self.__board = generate_empty_board()
+        self.__ui = ui
 
     def is_valid(self, x: int, y: int) -> bool:
         if x < 0 or x > 11:
@@ -70,18 +71,18 @@ class YinshBoard():
             x += dist_x // distance
             y += dist_y // distance
 
-            print(f"CHECK ({x};{y})")
-
             # Vérifier la case
             if self.is_empty(x, y) and not marking_found:
                 pass
             else:
+                if self.is_empty(x, y) and marking_found and (x != x_end or y != y_end):
+                    return False
+                if self.is_empty(x, y) and marking_found and x == x_end and y == y_end:
+                    break
                 if self.__board[x][y].get_pawn_type() == "pawn":
                     return False
                 if self.__board[x][y].get_pawn_type() == "marking":
                     marking_found = True
-                if self.is_empty(x, y) and marking_found and x != x_end:
-                    return False
         return True
     
     def get_pawn(self, x: int, y: int) -> YinshPawn | None:
@@ -93,7 +94,30 @@ class YinshBoard():
         if not self.is_empty(x, y):
             return False
         self.__board[x][y] = pawn
+        self.__ui.draw_pawn(x, y, pawn)
         return True
+    
+    def move_pawn(self, x_start: int, y_start: int, x_end: int, y_end: int) -> None:
+        # Déplacer le pawn aux nouvelles coordonnées
+        old_pawn = self.__board[x_start][y_start]
+        self.__board[x_start][y_start] = 0
+        self.__ui.erase_pawn(x_start, y_start)
+        self.place_new_pawn(x_start, y_start, YinshPawn(old_pawn.get_player(), "marking"))
+        self.place_new_pawn(x_end, y_end, old_pawn)
+
+        # Retourner tous les marqueurs
+        distance = abs(x_end - x_start) if abs(x_end - x_start) != 0 else abs(y_end - y_start)
+        dist_x, dist_y = x_end - x_start, y_end - y_start
+        x, y = x_start, y_start
+        while x != x_end or y != y_end:
+            x += dist_x // distance
+            y += dist_y // distance
+
+            if not self.is_empty(x, y):
+                pawn = self.__board[x][y]
+                if pawn.get_pawn_type() == "marking":
+                    new_player = pawn.invert_player()
+                    self.__ui.set_color(x, y, new_player)
 
 def generate_empty_board() -> list[list[int | None]]:
     return [

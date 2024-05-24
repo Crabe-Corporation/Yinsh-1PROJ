@@ -56,6 +56,8 @@ class YinshUI():
             Label(self.__scoreboard, textvariable=self.__player_texts[1], font=DEFAULT_FONT, padx=10).pack()
         ]
 
+        self.__drawn_shapes = {}
+
         self.draw_board()
 
     def run(self):
@@ -68,22 +70,36 @@ class YinshUI():
 
     def draw_pawn(self, x: int, y: int, pawn: YinshPawn) -> int:
         if pawn.get_pawn_type() == "marking":
-            return self.__canvas.create_oval(X_OFFSETS[x] + y * 66.5 - 20 + GRID_OFFSET[0],
+            shape = self.__canvas.create_oval(X_OFFSETS[x] + y * 66.5 - 20 + GRID_OFFSET[0],
                                               H * x - 20 + GRID_OFFSET[1],
                                               X_OFFSETS[x] + y * 66.5 + 20 + GRID_OFFSET[0],
                                               H * x + 20 + GRID_OFFSET[1],
                                               fill=self.__color_scheme["pawns"][pawn.get_player()], width=0)
         else:
-            return self.__canvas.create_oval(X_OFFSETS[x] + y * 66.5 - 25 + GRID_OFFSET[0],
+            shape = self.__canvas.create_oval(X_OFFSETS[x] + y * 66.5 - 25 + GRID_OFFSET[0],
                                               H * x - 25 + GRID_OFFSET[1],
                                               X_OFFSETS[x] + y * 66.5 + 25 + GRID_OFFSET[0],
                                               H * x + 25 + GRID_OFFSET[1],
                                               fill="", outline=self.__color_scheme["pawns"][pawn.get_player()], width=8)
-        
+        self.__drawn_shapes[f"{x};{y}"] = shape
+        return shape
+
     def __handle_click(self, event: Event) -> None:
         # Envoyer les informations dans la partie logique du jeu
         coordinates = find_closest_point(event.x, event.y)
         self.__game.handle_click(coordinates[0], coordinates[1])
+
+    def erase_pawn(self, x: int, y: int) -> bool:
+        if f"{x};{y}" not in self.__drawn_shapes.keys():
+            return False
+        self.__canvas.delete(self.__drawn_shapes[f"{x};{y}"])
+        return True
+    
+    def set_color(self, x: int, y: int, player: int) -> bool:
+        if not f"{x};{y}" in self.__drawn_shapes.keys():
+            return False
+        self.__canvas.itemconfig(self.__drawn_shapes[f"{x};{y}"], fill=self.__color_scheme["pawns"][player])
+        return True
 
 class YinshMenu():
     def __init__(self) -> None:
