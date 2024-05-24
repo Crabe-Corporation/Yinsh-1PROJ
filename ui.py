@@ -14,7 +14,7 @@ YinshUI()
 - settings (tuple) : paramètres de la partie sous la forme (mode blitz/jeu en réseau). Valeur par défaut = (True, False). Transformé en dictionnaire à l'initialisation.
 """
 class YinshUI():
-    def __init__(self, game, gamemode: str, gametype: str) -> None:
+    def __init__(self, game, gamemode: str, gametype: str, players: list) -> None:
         if gamemode in ["Blitz", "Normal"] and gametype in ["Online", "Offline", "Solo"]:
             self.__game_settings = {
                 "mode": gamemode,
@@ -103,4 +103,51 @@ class YinshUI():
 
 class YinshMenu():
     def __init__(self) -> None:
-        pass
+        self.__game_settings=None
+        self.__root=Tk()
+        usernames=Frame(self.__root)
+        usernames.pack()
+
+        Label(usernames,text="Joueur 1 :", padx=10).pack(side="left")
+        self.__nomJoueur1=StringVar()
+        self.__nomJoueur1.trace_add("write", self.check_length)
+        self.__champJoueur1=Entry(usernames, width=20, textvariable=self.__nomJoueur1)
+        self.__champJoueur1.pack(side="left")
+
+        Label(usernames,text="Joueur 2 :", padx=10).pack(side="left")
+        self.__nomJoueur2=StringVar()
+        self.__nomJoueur2.trace_add("write", self.check_length)
+        self.__champJoueur2=Entry(usernames, width=20, textvariable=self.__nomJoueur2)
+        self.__champJoueur2.pack(side="left")
+
+        settings=Frame(self.__root, pady=25)
+        settings.pack()
+
+        self.__gamemode=StringVar()
+        self.__gametype=StringVar()
+        self.__gamemode.set("Normal")
+        self.__gametype.set("Offline")
+        self.__gm_menu=OptionMenu(settings, self.__gamemode, "Normal", "Blitz")
+        self.__gm_menu.pack(side="left", padx=10)
+        self.__gt_menu=OptionMenu(settings, self.__gametype, "Online", "Offline", "Solo")
+        self.__gt_menu.pack(side="left", padx=10)
+
+        Button(self.__root, text="Jouer", command=self.launch).pack()
+
+        self.__root.mainloop()
+    
+    def check_length(self, var, index, mode):
+        nomJoueur = self.__nomJoueur1 if var == "PY_VAR0" else self.__nomJoueur2
+        if len(nomJoueur.get())<=15:
+            return
+        else:
+            nomJoueur.set(nomJoueur.get()[0:15])
+
+    def launch(self):
+        gamemode=self.__gamemode.get()
+        gametype=self.__gametype.get()
+        self.__game_settings={"gamemode":gamemode, "gametype":gametype, "players":[self.__nomJoueur1.get(), self.__nomJoueur2.get()]}
+        self.__root.destroy()
+
+    def get_settings(self):
+        return self.__game_settings

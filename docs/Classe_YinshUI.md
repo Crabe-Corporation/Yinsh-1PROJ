@@ -6,6 +6,7 @@ La classe YinshUI s'occupe de gérer l'interface utilisateur d'une partie en cou
   Le mode de jeu utilisé pour la partie. Peut prendre la valeur "Normal" pour une partie en 3 points ou "Blitz" pour une partie en 1 point.
 - gametype (str)<br>
   Type de partie. Peut prendre la valeur "Online" pour une partie en réseau, "Offline" pour une partie 1 contre 1 en local (sur la même machine) ou "Solo" pour une partie contre l'ordinateur.
+- players (list) : Noms des joueurs.
 <br>
 Si l'un de ces paramètres n'est pas valide, la classe renvoie une ValueError.
 

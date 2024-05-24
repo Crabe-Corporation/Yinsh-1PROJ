@@ -1,4 +1,4 @@
-from ui import YinshUI
+from ui import YinshUI, YinshMenu
 from pawn import YinshPawn
 from board import YinshBoard
 
@@ -8,11 +8,12 @@ Classe principale du jeu
 """
 class Yinsh():
     def __init__(self, **params) -> None:
-        if not "gamemode" in params.keys() or "gametype" not in params.keys():
+        if not "gamemode" in params.keys() or "gametype" not in params.keys() or "players" not in params.keys():
             raise KeyError("la classe Yinsh a besoin des paramètres gamemode et gametype pour fonctionner !")
         else:
             self.__gamemode = params["gamemode"]
             self.__gametype = params["gametype"]
+            self.__players_names=params["players"]
             self.__ui = YinshUI(self, **params)
             self.__board = YinshBoard(self.__ui)
             self.__turn = 1
@@ -52,4 +53,6 @@ class Yinsh():
 
 
 if __name__ == "__main__":
-    game = Yinsh(gamemode="Blitz", gametype="Offline")
+    menu=YinshMenu()
+    settings=menu.get_settings()
+    game = Yinsh(**settings)
