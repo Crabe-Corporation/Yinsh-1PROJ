@@ -6,6 +6,7 @@ Gestion de l'interface graphique du jeu et du menu principal
 from tkinter import *
 from pawn import YinshPawn
 from board import X_OFFSETS, H, find_closest_point
+import tkinter.font as font
 DEFAULT_FONT = ("Helvetica", 16)
 GRID_OFFSET = (50, 61)
 
@@ -23,6 +24,7 @@ class YinshUI():
         else:
             raise ValueError("gamemode et/ou gametype invalide(s) !")
         self.__root = Tk()
+        self.__root.iconbitmap("icon.ico")
         self.__root.title("Yinsh")
         self.__root.resizable(False, False)
         self.__game = game
@@ -105,7 +107,17 @@ class YinshMenu():
     def __init__(self) -> None:
         self.__game_settings=None
         self.__root=Tk()
-        usernames=Frame(self.__root)
+
+        self.__root.iconbitmap("icon.ico")
+        self.__root.title("Lanceur Yinsh")
+        self.__root.resizable(False, False)
+
+        logo_file = PhotoImage(file="logo.png")
+        logo_label = Label(self.__root, image=logo_file)
+        logo_label.image = logo_file
+        logo_label.pack()
+
+        usernames=Frame(self.__root, pady=20)
         usernames.pack()
 
         Label(usernames,text="Joueur 1 :", padx=10).pack(side="left")
@@ -120,7 +132,7 @@ class YinshMenu():
         self.__champJoueur2=Entry(usernames, width=20, textvariable=self.__nomJoueur2)
         self.__champJoueur2.pack(side="left")
 
-        settings=Frame(self.__root, pady=25)
+        settings=Frame(self.__root, pady=10)
         settings.pack()
 
         self.__gamemode=StringVar()
@@ -129,10 +141,10 @@ class YinshMenu():
         self.__gametype.set("Offline")
         self.__gm_menu=OptionMenu(settings, self.__gamemode, "Normal", "Blitz")
         self.__gm_menu.pack(side="left", padx=10)
-        self.__gt_menu=OptionMenu(settings, self.__gametype, "Online", "Offline", "Solo")
+        self.__gt_menu=OptionMenu(settings, self.__gametype, "Online", "Offline", "Solo", command=self.on_change_gametype)
         self.__gt_menu.pack(side="left", padx=10)
 
-        Button(self.__root, text="Jouer", command=self.launch).pack()
+        Button(self.__root, text="JOUER", width="11", height="1", font=font.Font(family="Helvetica",size=20,weight="bold"), bg="#657082", fg="white", activebackground="#576170", activeforeground="white", command=self.launch).pack()
 
         self.__root.mainloop()
     
@@ -142,6 +154,13 @@ class YinshMenu():
             return
         else:
             nomJoueur.set(nomJoueur.get()[0:15])
+
+    def on_change_gametype(self, _):
+        if self.__gametype.get()=="Online" or self.__gametype.get()=="Solo":
+            self.__champJoueur2.configure(state=DISABLED)
+            self.__nomJoueur2.set("")
+        else :
+            self.__champJoueur2.configure(state=NORMAL)
 
     def launch(self):
         gamemode=self.__gamemode.get()
