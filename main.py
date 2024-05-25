@@ -16,6 +16,7 @@ class Yinsh():
             self.__players_names=params["players"]
             self.__ui = YinshUI(self, **params)
             self.__board = YinshBoard(self.__ui)
+            self.__pawns_out = (0, 0)
             self.__turn = 1
             self.__focused = None
 
@@ -30,6 +31,7 @@ class Yinsh():
             new_pawn = YinshPawn((self.__turn - 1) %2, "pawn")
             if self.__board.place_new_pawn(x, y, new_pawn):
                 self.__turn += 1
+                self.__ui.update_labels(self.__pawns_out, self.__turn)
         else:
             # Tour classique : déplacer un pion et créer un marqueur
             if not self.__focused:
@@ -48,6 +50,7 @@ class Yinsh():
                     self.__board.move_pawn(x_start, y_start, x, y)
                     self.__focused = None
                     self.__turn += 1
+                    self.__ui.update_labels(self.__pawns_out, self.__turn)
                 else:
                     pass
 

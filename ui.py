@@ -47,16 +47,22 @@ class YinshUI():
         logo_label.pack()
         text_gamemode = self.__game_settings["mode"]
         text_gamemode += ", en réseau" if self.__game_settings["type"] == "Online" else ", local"
-        pawns_to_win = 1 if self.__game_settings["mode"] == "Blitz" else 3
+        self.__pawns_to_win = 1 if self.__game_settings["mode"] == "Blitz" else 3
         Label(self.__scoreboard, text=f"Mode de jeu: {text_gamemode}", font=DEFAULT_FONT, padx=10, pady=30).pack()
+        self.__player_names = [
+            "Joueur 1" if players[0] == "" else players[0],
+            "Joueur 2" if players[1] == "" else players[1]
+        ]
         self.__player_texts = [
-            StringVar(value=f"Joueur 1: 0/{pawns_to_win} pions"),
-            StringVar(value=f"Joueur 2: 0/{pawns_to_win} pions")
+            StringVar(value=f"{self.__player_names[0]}: 0/{self.__pawns_to_win} pions"),
+            StringVar(value=f"{self.__player_names[1]}: 0/{self.__pawns_to_win} pions")
         ]
         self.__player_labels = [
             Label(self.__scoreboard, textvariable=self.__player_texts[0], font=DEFAULT_FONT, padx=10).pack(),
             Label(self.__scoreboard, textvariable=self.__player_texts[1], font=DEFAULT_FONT, padx=10).pack()
         ]
+        self.__turn_text = StringVar(value=f"Tour 1\n{self.__player_names[0]}, c'est votre tour !")
+        Label(self.__scoreboard, textvariable=self.__turn_text, font=DEFAULT_FONT, pady=30).pack()
 
         self.__drawn_shapes = {}
 
@@ -102,6 +108,11 @@ class YinshUI():
             return False
         self.__canvas.itemconfig(self.__drawn_shapes[f"{x};{y}"], fill=self.__color_scheme["pawns"][player])
         return True
+    
+    def update_labels(self, pawns_out: tuple[int], turn: int) -> None:
+        for i in range(2):
+            self.__player_texts[i].set(f"{self.__player_names[i]}: {pawns_out[i]}/{self.__pawns_to_win} pions")
+        self.__turn_text.set(f"Tour {turn}\n{self.__player_names[(turn + 1) %2]}, c'est votre tour !")
 
 class YinshMenu():
     def __init__(self) -> None:

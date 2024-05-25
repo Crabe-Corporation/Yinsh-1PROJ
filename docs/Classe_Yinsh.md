@@ -14,6 +14,7 @@ Les paramètres sont passées via **params pour passer les arguments en keyword 
 - private players_names (list) : Noms des joueurs
 - private ui (YinshUI) : Composant interface graphique du jeu
 - private board (YinshBoard) : Composant plateau utilisée pour la partie
+- private pawns_out (tuple[int]) : nombre de pions retirés du plateau pour chaque joueur
 - private turn (int) : Compteur de tours de la partie
 - private focused (tuple) : Coordonnées du pion sélectionné pour un déplacement. Défini à `None` au début de la partie ou si aucun pion n'est sélectionné.
 ## Méthodes
