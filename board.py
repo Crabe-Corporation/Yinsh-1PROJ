@@ -36,13 +36,16 @@ class YinshBoard():
         self.__ui = ui
 
     def is_valid(self, x: int, y: int) -> bool:
-        if x < 0 or x > 11:
+        try:
+            if x < 0 or x > 10:
+                return False
+            if y < 0 or x > 10:
+                return False
+            if self.__board[x][y] == None:
+                return False
+            return True
+        except IndexError:
             return False
-        if y < 0 or x > 11:
-            return False
-        if self.__board[x][y] == None:
-            return False
-        return True
     
     def is_empty(self, x: int, y: int) -> bool:
         if not self.is_valid(x, y):
@@ -114,10 +117,49 @@ class YinshBoard():
             y += dist_y // distance
 
             if not self.is_empty(x, y):
-                pawn = self.__board[x][y]
+                pawn: YinshPawn = self.__board[x][y]
                 if pawn.get_pawn_type() == "marking":
                     new_player = pawn.invert_player()
                     self.__ui.set_color(x, y, new_player)
+
+    def check_board_for_alignment(self) -> list[dict]:
+        # Lister tous les alignements présents sur le plateau
+        alignments = []
+        for x in range(11):
+            for y in range(11):
+                if self.__board[x][y] not in (None, 0):
+                    pawn: YinshPawn = self.__board[x][y]
+                    if pawn.get_pawn_type() == "marking":
+                        new_alignments = self.__check_nearby_intersections(x, y, pawn.get_player())
+                        alignments.extend(new_alignments)
+
+        # Récupérer toutes les coordonnées de marqueurs pouvant être retirés
+        coordinates = [[],[]] # Séparation des marqueurs du joueur 1 et du joueur 2
+        for alignment in alignments:
+            for intersection in alignment["markers"]:
+                if intersection not in coordinates[self.__board[intersection[0]][intersection[1]].get_player()]:
+                    coordinates[self.__board[intersection[0]][intersection[1]].get_player()].append(intersection)
+
+        return coordinates if len(alignments) > 0 else None
+
+    def __check_nearby_intersections(self, x: int, y: int, player: int) -> list[dict]:
+        alignments = []
+        for dx in range(-1, 2):
+            for dy in range(-1, 2):
+                if (dx, dy) not in ((0, 0), (1, -1), (-1, 1)):
+                    if self.is_valid(x + dx, y + dy) and self.__board[x+dx][y+dy] not in (None, 0) and self.__board[x+dx][y+dy].get_player() == player and self.__board[x+dx][y+dy].get_pawn_type() == "marking":
+                        length = self.__check_alignment_length(x, y, (dx, dy), 1, player)
+                        if length >= 5:
+                            alignments.append({"origin": (x, y), "direction": (dx, dy), "length": length, "player": player, "markers": [(x + dx * i, y + dy * i) for i in range(length)]})
+        return alignments
+
+    def __check_alignment_length(self, x: int, y: int, direction: tuple[int], length: int, player: int, intersections = []) -> int:
+        if self.is_valid(x + direction[0], y + direction[1]) and not self.is_empty(x + direction[0], y + direction[1]):
+            pawn: YinshPawn = self.__board[x + direction[0]][y + direction[1]]
+            if pawn.get_pawn_type() == "marking" and pawn.get_player() == player:
+                return self.__check_alignment_length(x + direction[0], y + direction[1], direction, length + 1, player)
+        return length
+        
 
 def generate_empty_board() -> list[list[int | None]]:
     return [

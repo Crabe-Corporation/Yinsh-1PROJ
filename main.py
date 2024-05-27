@@ -13,12 +13,18 @@ class Yinsh():
         else:
             self.__gamemode = params["gamemode"]
             self.__gametype = params["gametype"]
-            self.__players_names=params["players"]
+            self.__players_names= (
+                "Joueur 1" if params["players"][0] == "" else params["players"][0],
+                "Joueur 2" if params["players"][1] == "" else params["players"][1]
+            )
             self.__ui = YinshUI(self, **params)
             self.__board = YinshBoard(self.__ui)
             self.__pawns_out = (0, 0)
             self.__turn = 1
             self.__focused = None
+            self.__alignment_mode = False
+            self.__selected_markers = None
+            self.__valid_markers = None
 
             #! Lancer l'interface graphique du jeu en dernier
             self.__ui.run()
@@ -30,18 +36,11 @@ class Yinsh():
                 return
             new_pawn = YinshPawn((self.__turn - 1) %2, "pawn")
             if self.__board.place_new_pawn(x, y, new_pawn):
-                self.__turn += 1
-                self.__ui.update_labels(self.__pawns_out, self.__turn)
+                self.__next_turn()
         else:
             # Tour classique : déplacer un pion et créer un marqueur
-            if not self.__focused:
-                pawn = self.__board.get_pawn(x, y)
-                if not pawn:
-                    return
-                if pawn.get_player() != (self.__turn - 1) %2:
-                    return
-                self.__focused = (x, y)
-            else:
+            if self.__focused:
+                print("MOVE")
                 x_start ,y_start = self.__focused
                 if x_start == x and y_start == y:
                     # Annulation
@@ -49,11 +48,38 @@ class Yinsh():
                 if self.__board.can_move(x_start, y_start, x, y):
                     self.__board.move_pawn(x_start, y_start, x, y)
                     self.__focused = None
-                    self.__turn += 1
-                    self.__ui.update_labels(self.__pawns_out, self.__turn)
+                    self.__next_turn(board_check=True)
                 else:
                     pass
 
+            if self.__alignment_mode:
+                print("ALIGNMENT")
+                pass
+
+            if not self.__focused and not self.__alignment_mode:
+                print("SELECT")
+                pawn = self.__board.get_pawn(x, y)
+                if not pawn:
+                    return
+                if pawn.get_player() != (self.__turn - 1) %2:
+                    return
+                self.__focused = (x, y)
+
+
+    def __next_turn(self, board_check=False) -> bool:
+        print("NEXT")
+        if board_check:
+            coordinates = self.__board.check_board_for_alignment()
+            print(coordinates)
+            if coordinates and len(coordinates[(self.__turn + 1) %2]) > 0:
+                # Alignements trouvés pour le joueur actif
+                self.__valid_markers = coordinates[(self.__turn + 1) %2]
+                self.__alignment_mode = True
+                return True
+
+        self.__turn += 1
+        self.__ui.update_labels(self.__pawns_out, self.__turn)
+        return False
 
 if __name__ == "__main__":
     menu=YinshMenu()
