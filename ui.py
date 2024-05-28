@@ -4,6 +4,7 @@ Gestion de l'interface graphique du jeu et du menu principal
 """
 
 from tkinter import *
+from tkinter.messagebox import showinfo
 from pawn import YinshPawn
 from board import X_OFFSETS, H, find_closest_point
 import tkinter.font as font
@@ -113,6 +114,20 @@ class YinshUI():
         for i in range(2):
             self.__player_texts[i].set(f"{self.__player_names[i]}: {pawns_out[i]}/{self.__pawns_to_win} pions")
         self.__turn_text.set(f"Tour {turn}\n{self.__player_names[(turn + 1) %2]}, c'est votre tour !")
+
+    def select(self, x: int, y: int, color = "white") -> None:
+        shape = self.__canvas.create_oval(X_OFFSETS[x] + y * 66.5 - 4 + GRID_OFFSET[0],
+                                          H * x - 4 + GRID_OFFSET[1],
+                                          X_OFFSETS[x] + y * 66.5 + 4 + GRID_OFFSET[0],
+                                          H * x + 4 + GRID_OFFSET[1],
+                                          fill=color, width=0)
+        self.__drawn_shapes[f"select={x};{y}"] = shape
+
+    def deselect(self, x: int, y: int) -> None:
+        self.__canvas.delete(self.__drawn_shapes[f"select={x};{y}"])
+
+    def show_victory_screen(self, winner: int) -> None:
+        showinfo("Yinsh", f"{self.__player_names[winner]} a gagné la partie !")
 
 class YinshMenu():
     def __init__(self) -> None:

@@ -122,6 +122,13 @@ class YinshBoard():
                     new_player = pawn.invert_player()
                     self.__ui.set_color(x, y, new_player)
 
+    def remove_pawn(self, x: int, y: int) -> bool:
+        if not self.is_empty(x, y):
+            self.__board[x][y] = 0
+            self.__ui.erase_pawn(x, y)
+            return True
+        return False
+
     def check_board_for_alignment(self) -> list[dict]:
         # Lister tous les alignements présents sur le plateau
         alignments = []

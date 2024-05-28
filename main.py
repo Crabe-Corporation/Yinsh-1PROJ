@@ -19,11 +19,12 @@ class Yinsh():
             )
             self.__ui = YinshUI(self, **params)
             self.__board = YinshBoard(self.__ui)
-            self.__pawns_out = (0, 0)
+            self.__pawns_out = [0, 0]
             self.__turn = 1
             self.__focused = None
             self.__alignment_mode = False
-            self.__selected_markers = None
+            self.__pawn_removal_mode = False
+            self.__selected_markers = []
             self.__valid_markers = None
 
             #! Lancer l'interface graphique du jeu en dernier
@@ -52,9 +53,47 @@ class Yinsh():
                 else:
                     pass
 
+            if self.__pawn_removal_mode:
+                print("REMOVE PAWN")
+                pawn: YinshPawn = self.__board.get_pawn(x, y)
+                if pawn and pawn.get_pawn_type() == "pawn" and pawn.get_player() == (self.__turn + 1) %2:
+                    self.__board.remove_pawn(x, y)
+                    self.__pawns_out[(self.__turn + 1) %2] += 1
+                    self.__pawn_removal_mode = False
+                    self.__check_for_victory()
+                    if not self.__board.check_board_for_alignment():
+                        self.__alignment_mode = False
+                        self.__next_turn(board_check=True)
+                return
+
             if self.__alignment_mode:
                 print("ALIGNMENT")
-                pass
+                # Sélectionner / désélectionner un marqueur
+                if (x, y) in self.__valid_markers:
+                    if (x, y) not in self.__selected_markers:
+                        self.__ui.select(x, y)
+                        self.__selected_markers.append((x, y))
+                    else:
+                        self.__ui.deselect(x, y)
+                        self.__selected_markers.remove((x, y))
+                
+                # Si 5 marqueurs sont sélectionnés, vérifier qu'ils forment bien un alignement
+                if len(self.__selected_markers) >= 5:
+                    low = min(self.__selected_markers)
+                    high = max(self.__selected_markers)
+                    if (abs(high[0] - low[0]), abs(high[1] - low[1])) in ((4,0),(0,4),(4,4)):
+                        # Alignement valide
+                        for coordinates in self.__selected_markers:
+                            self.__board.remove_pawn(coordinates[0], coordinates[1])
+
+                    # Effacer la sélection de l'interface utilisateur
+                    for coordinates in self.__selected_markers:
+                        self.__ui.deselect(coordinates[0], coordinates[1])
+                    self.__selected_markers = []
+
+                    self.__pawn_removal_mode = True
+                    
+
 
             if not self.__focused and not self.__alignment_mode:
                 print("SELECT")
@@ -80,6 +119,13 @@ class Yinsh():
         self.__turn += 1
         self.__ui.update_labels(self.__pawns_out, self.__turn)
         return False
+    
+    def __check_for_victory(self) -> bool:
+        threshold = 1 if self.__gamemode == "Blitz" else 3
+        for player in range(2):
+            if self.__pawns_out[player] >= threshold:
+                self.__ui.update_labels(self.__pawns_out, self.__turn)
+                self.__ui.show_victory_screen(player)
 
 if __name__ == "__main__":
     menu=YinshMenu()

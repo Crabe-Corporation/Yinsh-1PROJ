@@ -29,3 +29,6 @@ Si l'un de ces paramètres n'est pas valide, la classe renvoie une ValueError.
 - public erase_pawn(self, x: int, y: int) -> bool : fonction servant à effacer une forme dessinée aux coordonnées (x;y) du plateau. Renvoie `True` si la suppression de la forme a été correctement effectuée
 - public set_color(self, x: int, y: int, player: int) -> bool : modifie la couleur d'une forme dessinée aux coordonnées (x;y) du plateau pour correspondre au numéro du joueur passé en paramètre. Renvoie `True` si l'inversion est réussie
 - public update_labels(self, pawns_out: tuple[int], turn: int) -> None : met à jour les labels des joueurs et le label du tour en cours. Appelée à chaque tour depuis la classe Yinsh
+- public select(self, x: int, y: int, color: str) -> None : ajoute un point (blanc par défaut, modifiable via l'argument color) aux coordonnées (x;y) du plateau de jeu
+- public deselect(self, x: int, y: int) -> None : retire un point ajouté par la fonction `select` aux coordonnées (x;y)
+- public show_victory_screen(self, winner: int) -> None : affiche l'écran de victoire et ferme le jeu
