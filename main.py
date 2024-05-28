@@ -125,9 +125,16 @@ class Yinsh():
         for player in range(2):
             if self.__pawns_out[player] >= threshold:
                 self.__ui.update_labels(self.__pawns_out, self.__turn)
-                self.__ui.show_victory_screen(player)
+                self.__replay=self.__ui.show_victory_screen(player)
+                self.__ui.kill()
+
+    def do_replay(self) -> bool:
+        return self.__replay
 
 if __name__ == "__main__":
-    menu=YinshMenu()
-    settings=menu.get_settings()
-    game = Yinsh(**settings)
+    while True:
+        menu=YinshMenu()
+        settings=menu.get_settings()
+        game = Yinsh(**settings)
+        if not game.do_replay():
+            break
