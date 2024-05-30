@@ -19,3 +19,5 @@ Gestion complète du plateau de jeu et des déplacements des pions.
 - private check_alignment_length(self, x: int, y: int, direction: tuple[int], length: int, player: int, intersections = []) -> int: dans la continuité des fonctions `check_board_for_alignment` et `check_nearby_intersections`, fonction récursive vérifiant la longueur de l'alignement détecté et retournant un entier indiquant le nombre de marqueurs alignés
 - public get_possible_moves(self, x: int, y: int) -> list[tuple]: renvoie toutes les destinations possibles pour un pion situé aux coordonnées (x;y) ou un tableau vide en cas d'erreur
 - public is_blocked(self, x: int, y: int) -> bool: renvoie `True` si le pion situé aux coordonnées (x;y) ne peut pas se déplacer sur le plateau
+- public is_player_blocked(self, player: int) -> bool: vérifie si le joueur `player` peut déplacer un de ses pions et renvoie `True` si c'est le cas
+- public is_everyone_blocked(self) -> bool: vérifie si un des joueurs peut encore bouger un de ses pions et renvoie `True` si c'est le cas

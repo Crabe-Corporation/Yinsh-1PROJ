@@ -5,13 +5,13 @@ La classe YinshUI s'occupe de gérer l'interface utilisateur d'une partie en cou
 - gamemode (str)<br>
   Le mode de jeu utilisé pour la partie. Peut prendre la valeur "Normal" pour une partie en 3 points ou "Blitz" pour une partie en 1 point.
 - gametype (str)<br>
-  Type de partie. Peut prendre la valeur "Online" pour une partie en réseau, "Offline" pour une partie 1 contre 1 en local (sur la même machine) ou "Solo" pour une partie contre l'ordinateur.
+  Type de partie. Peut prendre la valeur "Offline" pour une partie 1 contre 1 en local (sur la même machine) ou "Solo" pour une partie contre l'ordinateur.
 - players (list) : Noms des joueurs.
 <br>
 Si l'un de ces paramètres n'est pas valide, la classe renvoie une ValueError.
 
 ## Variables
-- private game_settings (dict) : contient les paramètres de la partie (deux clés : "blitz_mode" et "online", contenant des booléens)
+- private game_settings (dict) : contient les paramètres de la partie (deux clés : "mode" et "type", contenant des booléens)
 - private root (Tk) : fenêtre de jeu Tkinter principale
 - private canvas (Canvas) : affichage de la grille de jeu
 - private scoreboard (Frame) : frame contenant les informations de la partie en cours (joueurs, pions retirés, etc)
@@ -32,5 +32,5 @@ Si l'un de ces paramètres n'est pas valide, la classe renvoie une ValueError.
 - public select(self, x: int, y: int, color: str) -> None : ajoute un point (blanc par défaut, modifiable via l'argument color) aux coordonnées (x;y) du plateau de jeu
 - public deselect(self, x: int, y: int) -> None : retire un point ajouté par la fonction `select` aux coordonnées (x;y)
 - public get_color_scheme(self) -> dict : retourne les couleurs utilisées dans l'interface graphique du jeu
-- public show_victory_screen(self, winner: int) -> bool : affiche l'écran de victoire, demande au joueur si il veut rejouer et renvoie `True` si il sélectionne "Oui"
+- public show_victory_screen(self, winner: int, stalemate = False) -> bool : affiche l'écran de victoire, demande au joueur si il veut rejouer et renvoie `True` si il sélectionne "Oui"
 - public kill(self) -> None : ferme la fenêtre de jeu une fois la partie terminée

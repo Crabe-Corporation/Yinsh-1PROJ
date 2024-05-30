@@ -172,7 +172,7 @@ class YinshBoard():
             return []
         
         pawn: YinshPawn = self.__board[x][y]
-        if pawn.get_pawn_type() == "marking":
+        if pawn and pawn.get_pawn_type() == "marking":
             return []
         
         coordinates = []
@@ -193,6 +193,20 @@ class YinshBoard():
     
     def is_blocked(self, x: int, y: int) -> bool:
         return self.get_possible_moves(x, y) == []
+    
+    def is_player_blocked(self, player: int) -> bool:
+        for x in range(11):
+            for y in range(11):
+                if self.__board[x][y] and not self.is_empty(x, y) and not self.is_blocked(x, y) and self.__board[x][y].get_player() == player:
+                    return False
+        return True
+    
+    def is_everyone_blocked(self) -> bool:
+        for x in range(11):
+            for y in range(11):
+                if not self.is_empty(x, y) and not self.is_blocked(x, y):
+                    return False
+        return True
 
 
 def generate_empty_board() -> list[list[int | None]]:

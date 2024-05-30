@@ -11,7 +11,7 @@ Aucun paramètre.
 - private nomJoueur2 (StringVar) : Nom du joueur 2
 - private champJoueur2 (Entry) : Champ de texte pour inscrire le nom du joueur 2
 - private gamemode (StringVar) : Stockage du mode de jeu (Normal/Blitz)
-- private gametype (StringVar) : Stockage du type de jeu (Offline/Online/Solo)
+- private gametype (StringVar) : Stockage du type de jeu (Offline/Solo)
 - private gm_menu (OptionMenu) : Menu déroulant des modes de jeu
 - private gt_menu (OptionMenu) : Menu déroulant des types de jeu
 ## Méthodes

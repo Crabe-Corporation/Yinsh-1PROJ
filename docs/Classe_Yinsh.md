@@ -5,7 +5,7 @@ Les paramètres sont passées via **params pour passer les arguments en keyword 
 - gamemode (str)<br>
   Le mode de jeu utilisé pour la partie. Peut prendre la valeur "Normal" pour une partie en 3 points ou "Blitz" pour une partie en 1 point.
 - gametype (str)<br>
-  Type de partie. Peut prendre la valeur "Online" pour une partie en réseau, "Offline" pour une partie 1 contre 1 en local (sur la même machine) ou "Solo" pour une partie contre l'ordinateur.
+  Type de partie. Peut prendre la valeur "Offline" pour une partie 1 contre 1 en local (sur la même machine) ou "Solo" pour une partie contre l'ordinateur.
 - players (list)<br>
   Noms des joueurs.
 ## Variables
@@ -24,6 +24,7 @@ Les paramètres sont passées via **params pour passer les arguments en keyword 
 - private replay (bool) : Défini à `True` si le joueur veut relancer une nouvelle partie
 - private possible_moves (list) : Enregistre les déplacements possibles pour effacer les points servant à visualiser les mouvements possibles d'un pion sur le plateau
 - private ai_pawns (list) : Liste des pions du joueur IA dans une partie en mode solo
+- private game_ended (bool) : Défini à `False` en début de partie, la variable game_ended passe à `True` une fois la partie terminée pour éviter de relancer un tour du joueur IA une fois la fenêtre fermée
 ## Méthodes
 - public handle_click(self, x: int, y: int) -> None: fonction appelée par la classe YinshUI lorsqu'un joueur clique sur le plateau de jeu pour gérer la logique du jeu.
 - private next_turn(self, check_board: bool) -> bool: exécute toutes les fonctions de la fin du tour et incrémente le compteur `self.__turn`. Si un alignement est découvert, la fonction va attendre que le joueur sélectionne 5 marqueurs à retirer du plateau (ainsi qu'un de ses pions) avant d'incrémenter le compteur de tours. Vérification de la grille uniquement si l'argument check_board est défini à `True`

@@ -17,7 +17,7 @@ YinshUI()
 """
 class YinshUI():
     def __init__(self, game, gamemode: str, gametype: str, players: list) -> None:
-        if gamemode in ["Blitz", "Normal"] and gametype in ["Online", "Offline", "Solo"]:
+        if gamemode in ["Blitz", "Normal"] and gametype in ["Offline", "Solo"]:
             self.__game_settings = {
                 "mode": gamemode,
                 "type": gametype
@@ -47,7 +47,7 @@ class YinshUI():
         logo_label.image = logo_file
         logo_label.pack()
         text_gamemode = self.__game_settings["mode"]
-        text_gamemode += ", en réseau" if self.__game_settings["type"] == "Online" else ", local"
+        text_gamemode += ", solo" if self.__game_settings["type"] == "Solo" else ", local"
         self.__pawns_to_win = 1 if self.__game_settings["mode"] == "Blitz" else 3
         Label(self.__scoreboard, text=f"Mode de jeu: {text_gamemode}", font=DEFAULT_FONT, padx=10, pady=30).pack()
         self.__player_names = [
@@ -129,8 +129,11 @@ class YinshUI():
     def get_color_scheme(self) -> dict:
         return self.__color_scheme
 
-    def show_victory_screen(self, winner: int) -> bool:
-        showinfo("Yinsh", f"{self.__player_names[winner]} a gagné la partie !")
+    def show_victory_screen(self, winner: int, stalemate = False) -> bool:
+        if stalemate:
+            showinfo("Yinsh", "Égalité !")
+        else:
+            showinfo("Yinsh", f"{self.__player_names[winner]} a gagné la partie !")
         replay=askyesno("Yinsh", "Voulez-vous rejouer ?")
         return replay
 
@@ -175,7 +178,7 @@ class YinshMenu():
         self.__gametype.set("Offline")
         self.__gm_menu=OptionMenu(settings, self.__gamemode, "Normal", "Blitz")
         self.__gm_menu.pack(side="left", padx=10)
-        self.__gt_menu=OptionMenu(settings, self.__gametype, "Online", "Offline", "Solo", command=self.on_change_gametype)
+        self.__gt_menu=OptionMenu(settings, self.__gametype, "Offline", "Solo", command=self.on_change_gametype)
         self.__gt_menu.pack(side="left", padx=10)
 
         Button(self.__root, text="JOUER", width="11", height="1", font=font.Font(family="Helvetica",size=20,weight="bold"), bg="#657082", fg="white", activebackground="#576170", activeforeground="white", command=self.launch).pack()
@@ -190,7 +193,7 @@ class YinshMenu():
             nomJoueur.set(nomJoueur.get()[0:15])
 
     def on_change_gametype(self, _):
-        if self.__gametype.get()=="Online" or self.__gametype.get()=="Solo":
+        if self.__gametype.get()=="Solo":
             self.__champJoueur2.configure(state=DISABLED)
             self.__nomJoueur2.set("")
         else :
@@ -200,6 +203,8 @@ class YinshMenu():
         gamemode=self.__gamemode.get()
         gametype=self.__gametype.get()
         self.__game_settings={"gamemode":gamemode, "gametype":gametype, "players":[self.__nomJoueur1.get(), self.__nomJoueur2.get()]}
+        if self.__gametype.get() == "Solo":
+            self.__game_settings["players"] = [self.__nomJoueur1.get(), "Ordinateur"]
         self.__root.destroy()
 
     def get_settings(self):

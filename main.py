@@ -30,6 +30,7 @@ class Yinsh():
             self.__replay = False
             self.__possible_moves = None
             self.__ai_pawns = []
+            self.__game_ended = False
 
             #! Lancer l'interface graphique du jeu en dernier
             self.__ui.run()
@@ -45,7 +46,6 @@ class Yinsh():
         else:
             # Tour classique : déplacer un pion et créer un marqueur
             if self.__focused:
-                print("MOVE")
                 x_start ,y_start = self.__focused
                 if x_start == x and y_start == y:
                     # Annulation
@@ -62,7 +62,6 @@ class Yinsh():
                     return
 
             if self.__pawn_removal_mode:
-                print("REMOVE PAWN")
                 pawn: YinshPawn = self.__board.get_pawn(x, y)
                 if pawn and pawn.get_pawn_type() == "pawn" and pawn.get_player() == (self.__turn + 1) %2:
                     self.__board.remove_pawn(x, y)
@@ -76,7 +75,6 @@ class Yinsh():
                 return
 
             if self.__alignment_mode:
-                print("ALIGNMENT")
                 # Sélectionner / désélectionner un marqueur
                 if (x, y) in self.__valid_markers:
                     if (x, y) not in self.__selected_markers:
@@ -105,7 +103,6 @@ class Yinsh():
 
 
             if not self.__focused and not self.__alignment_mode:
-                print("SELECT")
                 pawn = self.__board.get_pawn(x, y)
                 if not pawn:
                     return
@@ -120,18 +117,15 @@ class Yinsh():
                         self.__possible_moves.append(point)
 
     def __next_turn(self, board_check=False) -> bool:
-        print("NEXT")
         if board_check:
             coordinates = self.__board.check_board_for_alignment()
-            print(coordinates)
             if coordinates and len(coordinates[(self.__turn + 1) %2]) > 0:
                 # Alignements trouvés pour le joueur actif
                 self.__valid_markers = coordinates[(self.__turn + 1) %2]
                 self.__alignment_mode = True
                 return True
             
-        if self.__gametype == "Solo" and not self.__alignment_mode:
-            print(self.__ai_pawns)
+        if self.__gametype == "Solo" and not self.__alignment_mode and not self.__game_ended:
             if self.__turn <= 10:
                 while True:
                     x=randint(0,10)
@@ -149,7 +143,9 @@ class Yinsh():
                         blocked = False
                         break
                 if blocked:
-                    print("IA bloquée !")
+                    # Passer le tour si le joueur est bloqué
+                    self.__turn += 2
+                    return
 
                 while True:
                     pawn_index = randint(0, 4 - self.__pawns_out[1])
@@ -163,7 +159,6 @@ class Yinsh():
 
                         # Vérifier à nouveau le board
                         coordinates = self.__board.check_board_for_alignment()
-                        print(coordinates)
                         if coordinates and len(coordinates[1]) > 0:
                             # Alignements trouvés pour le joueur actif
                             while True:
@@ -178,10 +173,11 @@ class Yinsh():
 
                                     # Retirer un pion aléatoire
                                     pawn_to_remove = choice(self.__ai_pawns)
-                                    index = self.__ai_pawns.index(pawn_to_remove)
+                                    self.__ai_pawns.remove(pawn_to_remove)
                                     self.__board.remove_pawn(pawn_to_remove[0], pawn_to_remove[1])
                                     self.__pawns_out[1] += 1
 
+                                    self.__check_for_victory()
                                     alignments = self.__board.check_board_for_alignment()
                                     if not alignments or not alignments[(self.__turn + 1) %2]:
                                         break
@@ -189,7 +185,11 @@ class Yinsh():
                         break
             self.__focused = None
         else:
-            self.__turn += 1
+            if self.__board.is_player_blocked((self.__turn + 1) %2):
+                # Passer le tour si le joueur est bloqué
+                self.__turn += 2
+            else:
+                self.__turn += 1
 
         self.__ui.update_labels(self.__pawns_out, self.__turn)
         return False
@@ -198,9 +198,18 @@ class Yinsh():
         threshold = 1 if self.__gamemode == "Blitz" else 3
         for player in range(2):
             if self.__pawns_out[player] >= threshold:
+                self.__game_ended = True
                 self.__ui.update_labels(self.__pawns_out, self.__turn)
                 self.__replay=self.__ui.show_victory_screen(player)
                 self.__ui.kill()
+        
+        if self.__board.is_everyone_blocked():
+            if self.__pawns_out[0] > self.__pawns_out[1]:
+                self.__replay = self.__ui.show_victory_screen(0)
+            elif self.__pawns_out[0] < self.__pawns_out[1]:
+                self.__replay = self.__ui.show_victory_screen(1)
+            else:
+                self.__replay = self.__ui.show_victory_screen()
 
     def do_replay(self) -> bool:
         return self.__replay
