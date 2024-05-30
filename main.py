@@ -1,7 +1,7 @@
 from ui import YinshUI, YinshMenu
 from pawn import YinshPawn
 from board import YinshBoard
-from random import randint
+from random import randint, sample, choice
 
 """
 Yinsh()
@@ -55,9 +55,9 @@ class Yinsh():
                 if self.__board.can_move(x_start, y_start, x, y):
                     self.__board.move_pawn(x_start, y_start, x, y)
                     self.__focused = None
-                    self.__next_turn(board_check=True)
                     for point in self.__possible_moves:
                         self.__ui.deselect(point[0], point[1])
+                    self.__next_turn(board_check=True)
                 else:
                     return
 
@@ -69,7 +69,8 @@ class Yinsh():
                     self.__pawns_out[(self.__turn + 1) %2] += 1
                     self.__pawn_removal_mode = False
                     self.__check_for_victory()
-                    if not self.__board.check_board_for_alignment():
+                    alignments = self.__board.check_board_for_alignment()
+                    if not alignments or not alignments[(self.__turn + 1) %2]:
                         self.__alignment_mode = False
                         self.__next_turn(board_check=True)
                 return
@@ -118,27 +119,6 @@ class Yinsh():
                         self.__ui.select(point[0], point[1], color="black")
                         self.__possible_moves.append(point)
 
-        if self.__gametype == "Solo" and (self.__turn + 1) %2 == 1:
-            if self.__turn <= 10:
-                while True:
-                    x=randint(0,10)
-                    y=randint(0,10)
-                    if self.__board.is_valid(x,y) and self.__board.is_empty(x,y):
-                        new_pawn=YinshPawn((self.__turn-1)%2, "pawn")
-                        if self.__board.place_new_pawn(x, y, new_pawn):
-                            self.__ai_pawns.append((x, y))
-                            self.__next_turn()
-                            break
-            else:
-                while True:
-                    pawn=self.__ai_pawns[randint(0, 4 - self.__pawns_out[1])]
-                    moves=self.__board.get_possible_moves(pawn[0], pawn[1])
-                    if len(moves) > 0:
-                        new_position=moves[randint(0, len(moves) - 1)]
-                        self.__board.move_pawn(pawn[0], pawn[1], new_position[0], new_position[1])
-                        self.__next_turn(board_check=True)
-                        break
-
     def __next_turn(self, board_check=False) -> bool:
         print("NEXT")
         if board_check:
@@ -149,8 +129,68 @@ class Yinsh():
                 self.__valid_markers = coordinates[(self.__turn + 1) %2]
                 self.__alignment_mode = True
                 return True
+            
+        if self.__gametype == "Solo" and not self.__alignment_mode:
+            print(self.__ai_pawns)
+            if self.__turn <= 10:
+                while True:
+                    x=randint(0,10)
+                    y=randint(0,10)
+                    if self.__board.is_valid(x,y) and self.__board.is_empty(x,y):
+                        new_pawn=YinshPawn(1, "pawn")
+                        if self.__board.place_new_pawn(x, y, new_pawn):
+                            self.__ai_pawns.append((x, y))
+                            self.__turn += 2
+                            break
+            else:
+                blocked = True
+                for pawn in self.__ai_pawns:
+                    if not self.__board.is_blocked(pawn[0], pawn[1]):
+                        blocked = False
+                        break
+                if blocked:
+                    print("IA bloquée !")
 
-        self.__turn += 1
+                while True:
+                    pawn_index = randint(0, 4 - self.__pawns_out[1])
+                    pawn=self.__ai_pawns[pawn_index]
+                    moves=self.__board.get_possible_moves(pawn[0], pawn[1])
+                    if len(moves) > 0:
+                        new_position=moves[randint(0, len(moves) - 1)]
+                        self.__board.move_pawn(pawn[0], pawn[1], new_position[0], new_position[1])
+                        self.__ai_pawns[pawn_index] = new_position
+                        self.__turn += 2
+
+                        # Vérifier à nouveau le board
+                        coordinates = self.__board.check_board_for_alignment()
+                        print(coordinates)
+                        if coordinates and len(coordinates[1]) > 0:
+                            # Alignements trouvés pour le joueur actif
+                            while True:
+                                points = sample(coordinates[1], 5)
+
+                                low = min(points)
+                                high = max(points)
+                                if (abs(high[0] - low[0]), abs(high[1] - low[1])) in ((4,0),(0,4),(4,4)):
+                                    # Alignement valide
+                                    for coordinates in points:
+                                        self.__board.remove_pawn(coordinates[0], coordinates[1])
+
+                                    # Retirer un pion aléatoire
+                                    pawn_to_remove = choice(self.__ai_pawns)
+                                    index = self.__ai_pawns.index(pawn_to_remove)
+                                    self.__board.remove_pawn(pawn_to_remove[0], pawn_to_remove[1])
+                                    self.__pawns_out[1] += 1
+
+                                    alignments = self.__board.check_board_for_alignment()
+                                    if not alignments or not alignments[(self.__turn + 1) %2]:
+                                        break
+
+                        break
+            self.__focused = None
+        else:
+            self.__turn += 1
+
         self.__ui.update_labels(self.__pawns_out, self.__turn)
         return False
     

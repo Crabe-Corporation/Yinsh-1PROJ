@@ -129,7 +129,7 @@ class YinshBoard():
             return True
         return False
 
-    def check_board_for_alignment(self) -> list[dict]:
+    def check_board_for_alignment(self) -> list[list]:
         # Lister tous les alignements présents sur le plateau
         alignments = []
         for x in range(11):
@@ -190,6 +190,9 @@ class YinshBoard():
                             break
         
         return coordinates
+    
+    def is_blocked(self, x: int, y: int) -> bool:
+        return self.get_possible_moves(x, y) == []
 
 
 def generate_empty_board() -> list[list[int | None]]:

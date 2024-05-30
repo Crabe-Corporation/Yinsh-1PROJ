@@ -25,7 +25,7 @@ class YinshUI():
         else:
             raise ValueError("gamemode et/ou gametype invalide(s) !")
         self.__root = Tk()
-        self.__root.iconbitmap("Documents/Supinfo/Yinsh-1PROJ/icon.ico")
+        self.__root.iconbitmap("icon.ico")
         self.__root.title("Yinsh")
         self.__root.resizable(False, False)
         self.__game = game
@@ -42,7 +42,7 @@ class YinshUI():
         self.__canvas.pack(side="left")
         self.__scoreboard.pack(side="left")
 
-        logo_file = PhotoImage(file="Documents/Supinfo/Yinsh-1PROJ/logo.png")
+        logo_file = PhotoImage(file="logo.png")
         logo_label = Label(self.__scoreboard, image=logo_file)
         logo_label.image = logo_file
         logo_label.pack()
@@ -73,7 +73,7 @@ class YinshUI():
         self.__root.mainloop()
 
     def draw_board(self) -> None:
-        image_file = PhotoImage(file="Documents/Supinfo/Yinsh-1PROJ/grid.png")
+        image_file = PhotoImage(file="grid.png")
         self.__canvas.create_image(GRID_OFFSET[0], GRID_OFFSET[1], image=image_file, anchor=NW)
         self.__canvas.image = image_file
 
@@ -142,11 +142,11 @@ class YinshMenu():
         self.__game_settings=None
         self.__root=Tk()
 
-        self.__root.iconbitmap("Documents/Supinfo/Yinsh-1PROJ/icon.ico")
+        self.__root.iconbitmap("icon.ico")
         self.__root.title("Lanceur Yinsh")
         self.__root.resizable(False, False)
 
-        logo_file = PhotoImage(file="Documents/Supinfo/Yinsh-1PROJ/logo.png")
+        logo_file = PhotoImage(file="logo.png")
         logo_label = Label(self.__root, image=logo_file)
         logo_label.image = logo_file
         logo_label.pack()
