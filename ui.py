@@ -67,12 +67,12 @@ class YinshUI():
 
         self.__drawn_shapes = {}
 
-        self.draw_board()
+        self.__draw_board()
 
     def run(self):
         self.__root.mainloop()
 
-    def draw_board(self) -> None:
+    def __draw_board(self) -> None:
         image_file = PhotoImage(file="grid.png")
         self.__canvas.create_image(GRID_OFFSET[0], GRID_OFFSET[1], image=image_file, anchor=NW)
         self.__canvas.image = image_file
@@ -159,13 +159,13 @@ class YinshMenu():
 
         Label(usernames,text="Joueur 1 :", padx=10).pack(side="left")
         self.__nomJoueur1=StringVar()
-        self.__nomJoueur1.trace_add("write", self.check_length)
+        self.__nomJoueur1.trace_add("write", self.__check_length)
         self.__champJoueur1=Entry(usernames, width=20, textvariable=self.__nomJoueur1)
         self.__champJoueur1.pack(side="left")
 
         Label(usernames,text="Joueur 2 :", padx=10).pack(side="left")
         self.__nomJoueur2=StringVar()
-        self.__nomJoueur2.trace_add("write", self.check_length)
+        self.__nomJoueur2.trace_add("write", self.__check_length)
         self.__champJoueur2=Entry(usernames, width=20, textvariable=self.__nomJoueur2)
         self.__champJoueur2.pack(side="left")
 
@@ -178,28 +178,28 @@ class YinshMenu():
         self.__gametype.set("Offline")
         self.__gm_menu=OptionMenu(settings, self.__gamemode, "Normal", "Blitz")
         self.__gm_menu.pack(side="left", padx=10)
-        self.__gt_menu=OptionMenu(settings, self.__gametype, "Offline", "Solo", command=self.on_change_gametype)
+        self.__gt_menu=OptionMenu(settings, self.__gametype, "Offline", "Solo", command=self.__on_change_gametype)
         self.__gt_menu.pack(side="left", padx=10)
 
-        Button(self.__root, text="JOUER", width="11", height="1", font=font.Font(family="Helvetica",size=20,weight="bold"), bg="#657082", fg="white", activebackground="#576170", activeforeground="white", command=self.launch).pack()
+        Button(self.__root, text="JOUER", width="11", height="1", font=font.Font(family="Helvetica",size=20,weight="bold"), bg="#657082", fg="white", activebackground="#576170", activeforeground="white", command=self.__launch).pack()
 
         self.__root.mainloop()
     
-    def check_length(self, var, index, mode):
+    def __check_length(self, var, index, mode):
         nomJoueur = self.__nomJoueur1 if var == "PY_VAR0" else self.__nomJoueur2
         if len(nomJoueur.get())<=15:
             return
         else:
             nomJoueur.set(nomJoueur.get()[0:15])
 
-    def on_change_gametype(self, _):
+    def __on_change_gametype(self, _):
         if self.__gametype.get()=="Solo":
             self.__champJoueur2.configure(state=DISABLED)
             self.__nomJoueur2.set("")
         else :
             self.__champJoueur2.configure(state=NORMAL)
 
-    def launch(self):
+    def __launch(self):
         gamemode=self.__gamemode.get()
         gametype=self.__gametype.get()
         self.__game_settings={"gamemode":gamemode, "gametype":gametype, "players":[self.__nomJoueur1.get(), self.__nomJoueur2.get()]}
