@@ -126,6 +126,9 @@ class YinshUI():
     def deselect(self, x: int, y: int) -> None:
         self.__canvas.delete(self.__drawn_shapes[f"select={x};{y}"])
 
+    def get_color_scheme(self) -> dict:
+        return self.__color_scheme
+
     def show_victory_screen(self, winner: int) -> bool:
         showinfo("Yinsh", f"{self.__player_names[winner]} a gagné la partie !")
         replay=askyesno("Yinsh", "Voulez-vous rejouer ?")

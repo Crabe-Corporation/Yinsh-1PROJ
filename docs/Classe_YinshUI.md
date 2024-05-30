@@ -31,5 +31,6 @@ Si l'un de ces paramètres n'est pas valide, la classe renvoie une ValueError.
 - public update_labels(self, pawns_out: tuple[int], turn: int) -> None : met à jour les labels des joueurs et le label du tour en cours. Appelée à chaque tour depuis la classe Yinsh
 - public select(self, x: int, y: int, color: str) -> None : ajoute un point (blanc par défaut, modifiable via l'argument color) aux coordonnées (x;y) du plateau de jeu
 - public deselect(self, x: int, y: int) -> None : retire un point ajouté par la fonction `select` aux coordonnées (x;y)
+- public get_color_scheme(self) -> dict : retourne les couleurs utilisées dans l'interface graphique du jeu
 - public show_victory_screen(self, winner: int) -> bool : affiche l'écran de victoire, demande au joueur si il veut rejouer et renvoie `True` si il sélectionne "Oui"
 - public kill(self) -> None : ferme la fenêtre de jeu une fois la partie terminée

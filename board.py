@@ -166,7 +166,31 @@ class YinshBoard():
             if pawn.get_pawn_type() == "marking" and pawn.get_player() == player:
                 return self.__check_alignment_length(x + direction[0], y + direction[1], direction, length + 1, player)
         return length
+
+    def get_possible_moves(self, x: int, y: int) -> list[tuple]:
+        if self.is_empty(x, y):
+            return []
         
+        pawn: YinshPawn = self.__board[x][y]
+        if pawn.get_pawn_type() == "marking":
+            return []
+        
+        coordinates = []
+        for dx in range(-1, 2):
+            for dy in range(-1, 2):
+                if (dx, dy) not in ((0, 0), (1, -1), (-1, 1)):
+                    distance = 1
+                    while True:
+                        new_x, new_y = x + (dx * distance), y + (dy * distance)
+                        if self.is_valid(new_x, new_y):
+                            if self.can_move(x, y, new_x, new_y):
+                                coordinates.append((new_x, new_y))
+                            distance += 1
+                        else:
+                            break
+        
+        return coordinates
+
 
 def generate_empty_board() -> list[list[int | None]]:
     return [

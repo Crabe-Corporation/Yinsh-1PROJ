@@ -1,6 +1,7 @@
 from ui import YinshUI, YinshMenu
 from pawn import YinshPawn
 from board import YinshBoard
+from random import randint
 
 """
 Yinsh()
@@ -26,6 +27,9 @@ class Yinsh():
             self.__pawn_removal_mode = False
             self.__selected_markers = []
             self.__valid_markers = None
+            self.__replay = False
+            self.__possible_moves = None
+            self.__ai_pawns = []
 
             #! Lancer l'interface graphique du jeu en dernier
             self.__ui.run()
@@ -46,12 +50,16 @@ class Yinsh():
                 if x_start == x and y_start == y:
                     # Annulation
                     self.__focused = None
+                    for point in self.__possible_moves:
+                        self.__ui.deselect(point[0], point[1])
                 if self.__board.can_move(x_start, y_start, x, y):
                     self.__board.move_pawn(x_start, y_start, x, y)
                     self.__focused = None
                     self.__next_turn(board_check=True)
+                    for point in self.__possible_moves:
+                        self.__ui.deselect(point[0], point[1])
                 else:
-                    pass
+                    return
 
             if self.__pawn_removal_mode:
                 print("REMOVE PAWN")
@@ -102,8 +110,34 @@ class Yinsh():
                     return
                 if pawn.get_player() != (self.__turn - 1) %2:
                     return
-                self.__focused = (x, y)
+                if len(self.__board.get_possible_moves(x, y)) > 0:
+                    self.__focused = (x, y)
+                    self.__possible_moves = [(x, y)]
+                    self.__ui.select(x, y, color=self.__ui.get_color_scheme()["pawns"][(self.__turn + 1) %2])
+                    for point in self.__board.get_possible_moves(x,y):
+                        self.__ui.select(point[0], point[1], color="black")
+                        self.__possible_moves.append(point)
 
+        if self.__gametype == "Solo" and (self.__turn + 1) %2 == 1:
+            if self.__turn <= 10:
+                while True:
+                    x=randint(0,10)
+                    y=randint(0,10)
+                    if self.__board.is_valid(x,y) and self.__board.is_empty(x,y):
+                        new_pawn=YinshPawn((self.__turn-1)%2, "pawn")
+                        if self.__board.place_new_pawn(x, y, new_pawn):
+                            self.__ai_pawns.append((x, y))
+                            self.__next_turn()
+                            break
+            else:
+                while True:
+                    pawn=self.__ai_pawns[randint(0, 4 - self.__pawns_out[1])]
+                    moves=self.__board.get_possible_moves(pawn[0], pawn[1])
+                    if len(moves) > 0:
+                        new_position=moves[randint(0, len(moves) - 1)]
+                        self.__board.move_pawn(pawn[0], pawn[1], new_position[0], new_position[1])
+                        self.__next_turn(board_check=True)
+                        break
 
     def __next_turn(self, board_check=False) -> bool:
         print("NEXT")
@@ -135,6 +169,9 @@ if __name__ == "__main__":
     while True:
         menu=YinshMenu()
         settings=menu.get_settings()
-        game = Yinsh(**settings)
-        if not game.do_replay():
+        if settings:
+            game = Yinsh(**settings)
+            if not game.do_replay():
+                break
+        else:
             break

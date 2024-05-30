@@ -22,6 +22,8 @@ Les paramètres sont passées via **params pour passer les arguments en keyword 
 - private selected_markers (list) : Liste des marqueurs sélectionnés lorsque le joueur retire ses marqueurs après un alignement
 - private valid_markers (list) : Variable utilisée pour stocker les coordonnées des marqueurs pouvant être retirés du plateau de jeu lors d'un alignement
 - private replay (bool) : Défini à `True` si le joueur veut relancer une nouvelle partie
+- private possible_moves (list) : Enregistre les déplacements possibles pour effacer les points servant à visualiser les mouvements possibles d'un pion sur le plateau
+- private ai_pawns (list) : Liste des pions du joueur IA dans une partie en mode solo
 ## Méthodes
 - public handle_click(self, x: int, y: int) -> None: fonction appelée par la classe YinshUI lorsqu'un joueur clique sur le plateau de jeu pour gérer la logique du jeu.
 - private next_turn(self, check_board: bool) -> bool: exécute toutes les fonctions de la fin du tour et incrémente le compteur `self.__turn`. Si un alignement est découvert, la fonction va attendre que le joueur sélectionne 5 marqueurs à retirer du plateau (ainsi qu'un de ses pions) avant d'incrémenter le compteur de tours. Vérification de la grille uniquement si l'argument check_board est défini à `True`
