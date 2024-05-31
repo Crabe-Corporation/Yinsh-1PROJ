@@ -90,6 +90,7 @@ class Yinsh():
                     high = max(self.__selected_markers)
                     if (abs(high[0] - low[0]), abs(high[1] - low[1])) in ((4,0),(0,4),(4,4)):
                         # Alignement valide
+                        self.__pawn_removal_mode = True
                         for coordinates in self.__selected_markers:
                             self.__board.remove_pawn(coordinates[0], coordinates[1])
 
@@ -97,8 +98,6 @@ class Yinsh():
                     for coordinates in self.__selected_markers:
                         self.__ui.deselect(coordinates[0], coordinates[1])
                     self.__selected_markers = []
-
-                    self.__pawn_removal_mode = True
                     
 
 
