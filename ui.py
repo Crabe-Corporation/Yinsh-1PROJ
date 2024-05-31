@@ -110,7 +110,7 @@ class YinshUI():
         self.__canvas.itemconfig(self.__drawn_shapes[f"{x};{y}"], fill=self.__color_scheme["pawns"][player])
         return True
     
-    def update_labels(self, pawns_out: tuple[int], turn: int) -> None:
+    def update_labels(self, pawns_out: tuple, turn: int) -> None:
         for i in range(2):
             self.__player_texts[i].set(f"{self.__player_names[i]}: {pawns_out[i]}/{self.__pawns_to_win} pions")
         self.__turn_text.set(f"Tour {turn}\n{self.__player_names[(turn + 1) %2]}, c'est votre tour !")

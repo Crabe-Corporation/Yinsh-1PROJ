@@ -88,7 +88,7 @@ class YinshBoard():
                     marking_found = True
         return True
     
-    def get_pawn(self, x: int, y: int) -> YinshPawn | None:
+    def get_pawn(self, x: int, y: int) -> YinshPawn:
         if self.is_empty(x, y):
             return None
         return self.__board[x][y]
@@ -129,7 +129,7 @@ class YinshBoard():
             return True
         return False
 
-    def check_board_for_alignment(self) -> list[list]:
+    def check_board_for_alignment(self) -> list:
         # Lister tous les alignements présents sur le plateau
         alignments = []
         for x in range(11):
@@ -149,7 +149,7 @@ class YinshBoard():
 
         return coordinates if len(alignments) > 0 else None
 
-    def __check_nearby_intersections(self, x: int, y: int, player: int) -> list[dict]:
+    def __check_nearby_intersections(self, x: int, y: int, player: int) -> list:
         alignments = []
         for dx in range(-1, 2):
             for dy in range(-1, 2):
@@ -160,14 +160,14 @@ class YinshBoard():
                             alignments.append({"origin": (x, y), "direction": (dx, dy), "length": length, "player": player, "markers": [(x + dx * i, y + dy * i) for i in range(length)]})
         return alignments
 
-    def __check_alignment_length(self, x: int, y: int, direction: tuple[int], length: int, player: int, intersections = []) -> int:
+    def __check_alignment_length(self, x: int, y: int, direction: tuple, length: int, player: int, intersections = []) -> int:
         if self.is_valid(x + direction[0], y + direction[1]) and not self.is_empty(x + direction[0], y + direction[1]):
             pawn: YinshPawn = self.__board[x + direction[0]][y + direction[1]]
             if pawn.get_pawn_type() == "marking" and pawn.get_player() == player:
                 return self.__check_alignment_length(x + direction[0], y + direction[1], direction, length + 1, player)
         return length
 
-    def get_possible_moves(self, x: int, y: int) -> list[tuple]:
+    def get_possible_moves(self, x: int, y: int) -> list:
         if self.is_empty(x, y):
             return []
         
@@ -209,7 +209,7 @@ class YinshBoard():
         return True
 
 
-def generate_empty_board() -> list[list[int | None]]:
+def generate_empty_board() -> list:
     return [
             [None,0   ,0   ,0   ,0   ,None,None,None,None,None,None],
             [0   ,0   ,0   ,0   ,0   ,0   ,0   ,None,None,None,None],
@@ -224,7 +224,7 @@ def generate_empty_board() -> list[list[int | None]]:
             [None,None,None,None,None,None,0   ,0   ,0   ,0   ,None]
     ]
 
-def find_closest_point(x: int, y: int) -> tuple[int]:
+def find_closest_point(x: int, y: int) -> tuple:
     from ui import GRID_OFFSET
     
     # Calculer toutes les coordonnées des intersections du plateau
