@@ -8,6 +8,7 @@ from tkinter.messagebox import showinfo, askyesno
 from pawn import YinshPawn
 from board import X_OFFSETS, H, find_closest_point
 import tkinter.font as font
+from platform import system
 DEFAULT_FONT = ("Helvetica", 16)
 GRID_OFFSET = (50, 61)
 
@@ -25,14 +26,17 @@ class YinshUI():
         else:
             raise ValueError("gamemode et/ou gametype invalide(s) !")
         self.__root = Tk()
-        self.__root.iconbitmap("icon.ico")
+        if system() == "Linux":
+            self.__root.iconphoto(PhotoImage(file="icon.png"))
+        else:
+            self.__root.iconbitmap("icon.ico")
         self.__root.title("Yinsh")
         self.__root.resizable(False, False)
         self.__game = game
 
         self.__color_scheme = {
             "pawns": (
-                "#C55A11", "blue"
+                "#C55A11", "#115AC5"
             )
         }
 
@@ -145,7 +149,10 @@ class YinshMenu():
         self.__game_settings=None
         self.__root=Tk()
 
-        self.__root.iconbitmap("icon.ico")
+        if system() == "Linux":
+            self.__root.iconphoto(PhotoImage(file="icon.png"))
+        else:
+            self.__root.iconbitmap("icon.ico")
         self.__root.title("Lanceur Yinsh")
         self.__root.resizable(False, False)
 
