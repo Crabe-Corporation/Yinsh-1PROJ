@@ -27,7 +27,7 @@ class YinshUI():
             raise ValueError("gamemode et/ou gametype invalide(s) !")
         self.__root = Tk()
         if system() == "Linux":
-            self.__root.iconphoto(PhotoImage(file="icon.png"))
+            self.__root.iconphoto(False, PhotoImage(file="icon.png"))
         else:
             self.__root.iconbitmap("icon.ico")
         self.__root.title("Yinsh")
@@ -150,7 +150,7 @@ class YinshMenu():
         self.__root=Tk()
 
         if system() == "Linux":
-            self.__root.iconphoto(PhotoImage(file="icon.png"))
+            self.__root.iconphoto(False, PhotoImage(file="icon.png"))
         else:
             self.__root.iconbitmap("icon.ico")
         self.__root.title("Lanceur Yinsh")
